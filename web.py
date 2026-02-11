@@ -19,13 +19,20 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(self.get_response().encode("utf-8"))
 
     def get_response(self):
-        return f"""
-    <h1> Hola Web </h1>
-    <p> URL Parse Result : {self.url()}         </p>
-    <p> Path Original: {self.path}         </p>
-    <p> Headers: {self.headers}      </p>
-    <p> Query: {self.query_data()}   </p>
-"""
+        ruta = self.url().path
+        params = self.query_data()
+        
+        # Extraer valores de los parámetros
+        proyecto = ruta.split('/')[-1] if ruta and ruta != '/' else ''
+        autor = params.get('autor', '')
+        
+        # Generar HTML dinámico
+        if autor:
+            return f"<h1>Proyecto: {proyecto} Autor: {autor}</h1>"
+        elif proyecto and proyecto != '':
+            return f"<h1>Proyecto: {proyecto}</h1>"
+        else:
+            return "<h1>Bienvenido</h1>"
 
 
 if __name__ == "__main__":
@@ -33,4 +40,3 @@ if __name__ == "__main__":
     print(f"Starting server on port {port}")
     server = HTTPServer(("localhost", port), WebRequestHandler)
     server.serve_forever()
-
