@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qsl, urlparse
+from datetime import datetime
 
 
 class WebRequestHandler(BaseHTTPRequestHandler):
@@ -12,6 +13,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
+        self.send_header("Server", "WebRequestHandler/1.0")
+        self.send_header("Date", datetime.now().astimezone().strftime("%a, %d %b %Y %H:%M:%S %Z"))
         self.end_headers()
         self.wfile.write(self.get_response().encode("utf-8"))
 
@@ -26,6 +29,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    print("Starting server")
-    server = HTTPServer(("localhost", 8080), WebRequestHandler)
+    port = 8000
+    print(f"Starting server on port {port}")
+    server = HTTPServer(("localhost", port), WebRequestHandler)
     server.serve_forever()
+
